@@ -16,7 +16,6 @@ static int dips[2];
 void dipsToDigits()
 {
     char buf[10];
-    getLightDips(buf);
     int digitstoconvert = atoi(buf);
     if (digitstoconvert > 99) {
         dips[0] = 9;

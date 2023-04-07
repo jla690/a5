@@ -4,8 +4,39 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <pthread.h>
 
 #include "sharedDataStruct.h"
+#include "accelerometer.h"
+#include "utils.h"
+
+// 0x0f000000,     // Green
+// 0x000f0000, // Red
+// 0x00000f00, // Blue
+// 0x0000000f, // White
+// 0x0f0f0f00, // White (via RGB)
+// 0x0f0f0000, // Yellow
+// 0x000f0f00, // Purple
+// 0x0f000f00, // Teal
+
+// Try these; they are birght!
+// (You'll need to comment out some of the above)
+// 0xff000000, // Green Bright
+// 0x00ff0000, // Red Bright
+// 0x0000ff00, // Blue Bright
+// 0xffffff00, // White
+// 0xff0000ff, // Green Bright w/ Bright White
+// 0x00ff00ff, // Red Bright w/ Bright White
+// 0x0000ffff, // Blue Bright w/ Bright White
+// 0xffffffff, // White w/ Bright White
+
+// FOR GPIO PINS TO BE CONTROLLED BY PRU0
+// config-pin p8_12 pruout
+// config-pin p8_15 pruin
+
+// NEOPIXEL
+// NEED THIS FOR NEOPIXEL TO RUN
+// config-pin P8.11 pruout
 
 // General PRU Memomry Sharing Routine
 // ----------------------------------------------------------------
@@ -15,6 +46,10 @@
 #define PRU1_DRAM     0x02000
 #define PRU_SHAREDMEM 0x10000      // Offset to shared memory
 #define PRU_MEM_RESERVED 0x200     // Amount used by stack and heap
+
+#define GREEN 0x0f000000
+#define RED 0x000f0000
+#define BLUE 0x00000f00
 
 // Convert base address to each memory section
 #define PRU0_MEM_FROM_BASE(base) ( (base) + PRU0_DRAM + PRU_MEM_RESERVED)
@@ -55,15 +90,19 @@ int main(void)
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
 
-    // Print out the mem contents:
-    // printf("From the PRU, memory hold:\n");
-    // printf("    %15s: 0x%02x\n", "isLedOn", pSharedPru0->isLedOn);
-    // printf("    %15s: 0x%02x\n", "isButtonPressed", pSharedPru0->isButtonPressed);
-    // printf("    %15s: 0x%02x\n", "smileCount", pSharedPru0->smileCount);
-    // printf("    %15s: 0x%016llx\n", "numMs", pSharedPru0->numMsSinceBigBang);
     for (int i = 0; i < 8; i++) {
-        printf("%d\n" , pSharedPru0->LEDS[i]);
+        pSharedPru0->LEDS[i] = GREEN;
+        printf("%d\n", pSharedPru0->LEDS[i]);
     }
+    pthread_t accel_thread;
+    pthread_create(&accel_thread, NULL, accelerometerThread, NULL);
+    for (int i = 0; i < 10; i++) {
+        int* accels = getAccel();
+        sleepForMs(100);
+        printf("%d, %d \n", accels[0], accels[1]);
+    }
+    stopped = 1;
+    pthread_join(accel_thread, NULL);
 
     // // Drive it
     // for (int i = 0; i < 20; i++) {
