@@ -16,20 +16,29 @@
 // ----------------------------------------------------------------
 typedef struct {
     // 1 byte
-    bool isLedOn;
+    // bool isLedOn;
     // 1 byte
-    bool isButtonPressed;
+    // bool isButtonPressed;
+    // _Alignas(4) uint32_t LED0;
+    // _Alignas(4) uint32_t LED1;
+    // _Alignas(4) uint32_t LED2;
+    // _Alignas(4) uint32_t LED3;
+    // _Alignas(4) uint32_t LED4;
+    // _Alignas(4) uint32_t LED5;
+    // _Alignas(4) uint32_t LED6;
+    // _Alignas(4) uint32_t LED7;
+    _Alignas(4*8) uint32_t LEDS[8];
     
     
     // 2 byte short (2 byte aligned)
-    _Alignas(uint16_t) short smileCount;
+    // _Alignas(uint16_t) short smileCount;
 
     // // Padding
     // char _p0;
     // char _p1, _p2, _p3;
 
     // Must be dword aligned (multiple of 8)
-    _Alignas(8) uint64_t numMsSinceBigBang;             // Works!
+    // _Alignas(8) uint64_t numMsSinceBigBang;             // Works!
     // _Alignas(uint64_t) uint64_t numMsSinceBigBang;      // Fails!
     
 } sharedMemStruct_t;

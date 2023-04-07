@@ -51,33 +51,32 @@ void freePruMmapAddr(volatile void* pPruBase)
 
 int main(void)
 {
-    printf("Sharing memory with PRU\n");
-    printf("  LED should toggle each second\n");
-    printf("  Press the button to see its state here.\n");
-
     // Get access to shared memory for my uses
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
 
     // Print out the mem contents:
-    printf("From the PRU, memory hold:\n");
-    printf("    %15s: 0x%02x\n", "isLedOn", pSharedPru0->isLedOn);
-    printf("    %15s: 0x%02x\n", "isButtonPressed", pSharedPru0->isButtonPressed);
-    printf("    %15s: 0x%02x\n", "smileCount", pSharedPru0->smileCount);
-    printf("    %15s: 0x%016llx\n", "numMs", pSharedPru0->numMsSinceBigBang);
-
-    // Drive it
-    for (int i = 0; i < 20; i++) {
-        // Drive LED
-        pSharedPru0->isLedOn = (i % 2 == 0);
-
-        // Print button
-        printf("Button: %d\n", 
-            pSharedPru0->isButtonPressed);
-
-        // Timing
-        sleep(1);
+    // printf("From the PRU, memory hold:\n");
+    // printf("    %15s: 0x%02x\n", "isLedOn", pSharedPru0->isLedOn);
+    // printf("    %15s: 0x%02x\n", "isButtonPressed", pSharedPru0->isButtonPressed);
+    // printf("    %15s: 0x%02x\n", "smileCount", pSharedPru0->smileCount);
+    // printf("    %15s: 0x%016llx\n", "numMs", pSharedPru0->numMsSinceBigBang);
+    for (int i = 0; i < 8; i++) {
+        printf("%d\n" , pSharedPru0->LEDS[i]);
     }
+
+    // // Drive it
+    // for (int i = 0; i < 20; i++) {
+    //     // Drive LED
+    //     pSharedPru0->isLedOn = (i % 2 == 0);
+
+    //     // Print button
+    //     printf("Button: %d\n", 
+    //         pSharedPru0->isButtonPressed);
+
+    //     // Timing
+    //     sleep(1);
+    // }
 
     // Cleanup
     freePruMmapAddr(pPruBase);
