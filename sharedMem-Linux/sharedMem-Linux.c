@@ -148,7 +148,6 @@ void *LEDThread(void *arg)
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
     while (!stopped) {
-        printf("state: %d\n", currentState);
         switch (currentState) {
         case NONE:
             break;
@@ -225,7 +224,7 @@ int main(void)
 
     initializeLEDs();
     initThreads();
-    sleep(60);
+    sleep(5);
     stopThreads();
 
     // turn off all LEDs

@@ -125,7 +125,7 @@ void *accelerometerThread(void *arg)
     while (!stopped) {
         int *r_point = randomPoint();
         reset = 0;
-        while (!reset) {
+        while (!reset && !stopped) {
             char buffer[7];
             if (read(i2cFileDesc, buffer, sizeof(buffer)) != 7) {
                 printf("Error reading I2C\n");
