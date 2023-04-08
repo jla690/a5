@@ -20,8 +20,7 @@ all: nested-cross-compile pru-copy
 # Cross compile your C/C++ programs
 # Uncommet this for any folder you want to cross-compile
 nested-cross-compile:
-	@# make --directory=your-project-subdirectory-name-here
-	@# make --directory=logicAnalyzer-Linux
+	@make --directory=sharedMem-Linux
 
 pru-copy:
 	mkdir -p $(HOME)/cmpt433/public/pru/
