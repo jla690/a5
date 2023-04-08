@@ -13,6 +13,7 @@
 pthread_t accelerometer;
 pthread_t threadControl;
 pthread_t LED;
+pthread_t Joystick;
 
 void initThreads()
 {
@@ -24,6 +25,7 @@ void* threadControlThread(void* arg)
 {
     pthread_create(&accelerometer, NULL, accelerometerThread, NULL);
     pthread_create(&LED, NULL, LEDThread, NULL);
+    pthread_create(&Joystick, NULL, JoystickThread, NULL);
     return 0;
 }
 
@@ -32,4 +34,5 @@ void stopThreads()
     stopped = 1;
     pthread_join(accelerometer, NULL);
     pthread_join(LED, NULL);
+    pthread_join(Joystick, NULL);
 }
