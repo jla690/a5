@@ -67,7 +67,8 @@
 volatile void *getPruMmapAddr(void)
 {
     int fd = open("/dev/mem", O_RDWR | O_SYNC);
-    if (fd == -1) {
+    if (fd == -1)
+    {
         perror("ERROR: could not open /dev/mem");
         exit(EXIT_FAILURE);
     }
@@ -75,7 +76,8 @@ volatile void *getPruMmapAddr(void)
     // Points to start of PRU memory.
     volatile void *pPruBase =
         mmap(0, PRU_LEN, PROT_READ | PROT_WRITE, MAP_SHARED, fd, PRU_ADDR);
-    if (pPruBase == MAP_FAILED) {
+    if (pPruBase == MAP_FAILED)
+    {
         perror("ERROR: could not map memory");
         exit(EXIT_FAILURE);
     }
@@ -86,9 +88,12 @@ volatile void *getPruMmapAddr(void)
 
 void turnOnBottomLEDs(volatile sharedMemStruct_t *pSharedPru0, int color)
 {
-    for (int i = 0; i < 3; i++) {
-        if (i == 1) {
-            switch (color) {
+    for (int i = 0; i < 3; i++)
+    {
+        if (i == 1)
+        {
+            switch (color)
+            {
             case RED:
                 pSharedPru0->LEDS[i] = BRIGHT_RED;
                 break;
@@ -100,30 +105,37 @@ void turnOnBottomLEDs(volatile sharedMemStruct_t *pSharedPru0, int color)
                 break;
             }
         }
-        else {
+        else
+        {
             pSharedPru0->LEDS[i] = color;
         }
     }
-    for (int i = 3; i < LED_LEN; i++) {
+    for (int i = 3; i < LED_LEN; i++)
+    {
         pSharedPru0->LEDS[i] = 0;
     }
 }
 
 void setAllLEDs(volatile sharedMemStruct_t *pSharedPru0, int color)
 {
-    for (int i = 0; i < LED_LEN; i++) {
+    for (int i = 0; i < LED_LEN; i++)
+    {
         pSharedPru0->LEDS[i] = color;
     }
 }
 
 void turnOnTopLEDs(volatile sharedMemStruct_t *pSharedPru0, int color)
 {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++)
+    {
         pSharedPru0->LEDS[i] = 0;
     }
-    for (int i = 5; i < LED_LEN; i++) {
-        if (i == 6) {
-            switch (color) {
+    for (int i = 5; i < LED_LEN; i++)
+    {
+        if (i == 6)
+        {
+            switch (color)
+            {
             case RED:
                 pSharedPru0->LEDS[i] = BRIGHT_RED;
                 break;
@@ -135,7 +147,8 @@ void turnOnTopLEDs(volatile sharedMemStruct_t *pSharedPru0, int color)
                 break;
             }
         }
-        else {
+        else
+        {
             pSharedPru0->LEDS[i] = color;
         }
     }
@@ -147,8 +160,10 @@ void *LEDThread(void *arg)
 {
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
-    while (!stopped) {
-        switch (currentState) {
+    while (!stopped)
+    {
+        switch (currentState)
+        {
         case NONE:
             break;
         case LEFT_UP:
@@ -210,29 +225,42 @@ void *LEDThread(void *arg)
 
 void freePruMmapAddr(volatile void *pPruBase)
 {
-    if (munmap((void *)pPruBase, PRU_LEN)) {
+    if (munmap((void *)pPruBase, PRU_LEN))
+    {
         perror("PRU munmap failed");
         exit(EXIT_FAILURE);
     }
 }
 
-void processJoystick(sharedMemStruct_t *pSharedPru0) {
-    if(pSharedPru0->clickDown) {
-        printf("down\n");
-        //fire
-    } else if(pSharedPru0->clickRight) {
-        printf("down\n");
-        //exit app
+void *JoystickThread(void *arg)
+{
+    volatile void *pPruBase = getPruMmapAddr();
+    volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
+    while (!stopped)
+    {
+        if (pSharedPru0->clickDown)
+        {
+            printf("down\n");
+            // fire
+        }
+        else if (pSharedPru0->clickRight)
+        {
+            printf("right\n");
+            // exit app
+        }
+        sleepForMs(100);
     }
+    return 0;
 }
 
-void setupPins() {
+void setupPins()
+{
     // config-pin p8_15 pruin
     // config-pin p8_16 pruin
 }
 
 int main(void)
-{   
+{
     // Get access to shared memory for my uses
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);

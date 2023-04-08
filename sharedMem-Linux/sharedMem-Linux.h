@@ -10,6 +10,9 @@ void turnOnBottomLEDs(volatile sharedMemStruct_t *pSharedPru0, int color);
 // logic for determining which LED pattern to display
 void *LEDThread(void *arg);
 
+//thread for reading joystick down/right direction
+void *JoystickThread(void *arg);
+
 // sets all LEDs to the same color
 void setAllLEDs(volatile sharedMemStruct_t *pSharedPru0, int color);
 
