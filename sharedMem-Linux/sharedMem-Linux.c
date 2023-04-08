@@ -218,14 +218,21 @@ void freePruMmapAddr(volatile void *pPruBase)
 
 void processJoystick(sharedMemStruct_t *pSharedPru0) {
     if(pSharedPru0->clickDown) {
+        printf("down\n");
         //fire
     } else if(pSharedPru0->clickRight) {
+        printf("down\n");
         //exit app
     }
 }
 
+void setupPins() {
+    // config-pin p8_15 pruin
+    // config-pin p8_16 pruin
+}
+
 int main(void)
-{
+{   
     // Get access to shared memory for my uses
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
