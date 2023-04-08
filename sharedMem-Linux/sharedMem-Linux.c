@@ -216,6 +216,14 @@ void freePruMmapAddr(volatile void *pPruBase)
     }
 }
 
+void processJoystick(sharedMemStruct_t *pSharedPru0) {
+    if(pSharedPru0->clickDown) {
+        //fire
+    } else if(pSharedPru0->clickRight) {
+        //exit app
+    }
+}
+
 int main(void)
 {
     // Get access to shared memory for my uses

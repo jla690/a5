@@ -17,6 +17,7 @@ volatile register uint32_t __R31; // input GPIO register
 //   (Happens to be bit 15 and p8_15; just a coincidence; see P8 header info
 //   sheet)
 #define JOYSTICK_RIGHT_MASK (1 << 15)
+#define JOYSTICK_DOWN_MASK (1 << 16)
 
 #define STR_LEN 8           // # LEDs in our string
 #define oneCyclesOn 700 / 5 // Stay on 700ns
@@ -61,6 +62,9 @@ void main(void)
                 }
             }
         }
+
+        pSharedMemStruct->clickRight = (__R31 & JOYSTICK_RIGHT_MASK) != 0;
+        pSharedMemStruct->clickDown = (__R31 & JOYSTICK_DOWN_MASK) != 0;
 
         // Send Reset
         __R30 &= ~(0x1 << DATA_PIN); // Clear the GPIO pin

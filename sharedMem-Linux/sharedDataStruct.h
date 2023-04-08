@@ -28,7 +28,9 @@ typedef struct {
     // _Alignas(4) uint32_t LED6;
     // _Alignas(4) uint32_t LED7;
     _Alignas(4*8) uint32_t LEDS[8];
-    
+    bool clickRight;
+    bool clickDown;
+    char _p0, _p1;
     
     // 2 byte short (2 byte aligned)
     // _Alignas(uint16_t) short smileCount;
