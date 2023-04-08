@@ -19,6 +19,12 @@
 #define ACCELEROMETER_BUS "/dev/i2c-1"
 #define I2C_ADDRESS 0x1c
 
+enum {
+    NONE, LEFT_UP, LEFT, LEFT_DOWN, CENTER, CENTER_UP, CENTER_DOWN, RIGHT_UP, RIGHT, RIGHT_DOWN, LEFT_FAR_UP, LEFT_FAR_DOWN, RIGHT_FAR_UP, RIGHT_FAR_DOWN, CENTER_FAR_UP, CENTER_FAR_DOWN
+};
+
+extern int currentState;
+
 // Initialize the accelerometer
 void initAccelerometer();
 
@@ -31,8 +37,14 @@ int initI2cBus(char* bus, int address);
 // Read a register from the accelerometer
 unsigned char readI2cReg(unsigned char regAddr);
 
+// Determine the state of the accelerometer
+void determineState(int *r_point);
+
 // Thread to read the accelerometer
 void* accelerometerThread(void* arg);
+
+// Reset the random point
+void resetRandomPoint();
 
 // Get the accelerometer values
 int* getAccel();

@@ -16,6 +16,10 @@ static int16_t x = 0;
 static int16_t y = 0;
 static int16_t z = 0;
 
+int reset = 0;
+
+int currentState = NONE;
+
 void initAccelerometer()
 {
     runCommand("config-pin P9_18 i2c");
@@ -67,12 +71,60 @@ unsigned char readI2cReg(unsigned char regAddr)
     return value;
 }
 
+void determineState(int* r_point) {
+    if (x > r_point[0] + HYSTERESIS) {
+        if (y > r_point[1] + HYSTERESIS) {
+            currentState = LEFT_UP;
+            if (y > G - HYSTERESIS) {
+                currentState = LEFT_FAR_UP;
+            }
+        } else if (y < r_point[1] - HYSTERESIS) {
+            currentState = LEFT_DOWN;
+            if (y < -G + HYSTERESIS) {
+                currentState = LEFT_FAR_DOWN;
+            }
+        } else {
+            currentState = LEFT;
+        }
+    }
+    else if (x < r_point[0] - HYSTERESIS) {
+        if (y > r_point[1] + HYSTERESIS) {
+            currentState = RIGHT_UP;
+            if (y > G - HYSTERESIS) {
+                currentState = RIGHT_FAR_UP;
+            }
+        } else if (y < r_point[1] - HYSTERESIS) {
+            currentState = RIGHT_DOWN;
+            if (y < -G + HYSTERESIS) {
+                currentState = RIGHT_FAR_DOWN;
+            }
+        } else {
+            currentState = RIGHT;
+        }
+    }
+    else {
+        if (y > r_point[1] + HYSTERESIS) {
+            currentState = CENTER_UP;
+            if (y > G - HYSTERESIS) {
+                currentState = CENTER_FAR_UP;
+            }
+        } else if (y < r_point[1] - HYSTERESIS) {
+            currentState = CENTER_DOWN;
+            if (y < -G + HYSTERESIS) {
+                currentState = CENTER_FAR_DOWN;
+            }
+        } else {
+            currentState = CENTER;
+        }
+    }
+}
+
 void *accelerometerThread(void *arg)
 {
     initAccelerometer();
     while (!stopped) {
-        int reset = 0;
         int *r_point = randomPoint();
+        reset = 0;
         while (!reset) {
             char buffer[7];
             if (read(i2cFileDesc, buffer, sizeof(buffer)) != 7) {
@@ -87,20 +139,17 @@ void *accelerometerThread(void *arg)
             z /= 16;
             printf("Random Point: %d, %d, %d\n", r_point[0], r_point[1],
                    r_point[2]);
-            printf("X: %d, Y: %d, Z: %d\n", x, y, z);
-            if ((x < (r_point[0] + HYSTERESIS)) &&
-                (x > (r_point[0] - HYSTERESIS))) {
-                if ((y < (r_point[1] + HYSTERESIS)) &&
-                    (y > (r_point[1] - HYSTERESIS))) {
-                    printf("You Win!\n");
-                }
-            }
-            // printf("x: %d, y: %d, z: %d\n", x, y, z);
-            sleepForMs(10);
+            printf("Actual: X: %d, Y: %d, Z: %d\n", x, y, z);
+            determineState(r_point);
+            sleepForMs(100);
         }
     }
     close(i2cFileDesc);
     return 0;
+}
+
+void resetRandomPoint() {
+    reset = 1;
 }
 
 int *getAccel()

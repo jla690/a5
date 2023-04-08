@@ -9,13 +9,10 @@
 
 #include "accelerometer.h"
 #include "utils.h"
+#include "sharedMem-Linux.h"
 pthread_t accelerometer;
-pthread_t joystick;
 pthread_t threadControl;
-pthread_t networkT;
-pthread_t uptimeT;
-pthread_t accelerometerSoundT;
-pthread_t printTerminalT;
+pthread_t LED;
 
 void initThreads()
 {
@@ -26,6 +23,7 @@ void initThreads()
 void* threadControlThread(void* arg)
 {
     pthread_create(&accelerometer, NULL, accelerometerThread, NULL);
+    pthread_create(&LED, NULL, LEDThread, NULL);
     return 0;
 }
 
@@ -33,4 +31,5 @@ void stopThreads()
 {
     stopped = 1;
     pthread_join(accelerometer, NULL);
+    pthread_join(LED, NULL);
 }
