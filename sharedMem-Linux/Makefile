@@ -3,7 +3,7 @@
 
 # Edit this file to compile extra C files into their own programs.
 TARGETS = sharedMem-Linux
-C_FILES = accelerometer.c utils.c
+C_FILES = accelerometer.c utils.c thread_control.c
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
 

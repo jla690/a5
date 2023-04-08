@@ -14,6 +14,7 @@
 #define ACTIVE_MODE 0x2a
 
 #define G 1024
+#define HYSTERESIS 0.1*G
 
 #define ACCELEROMETER_BUS "/dev/i2c-1"
 #define I2C_ADDRESS 0x1c
@@ -36,7 +37,7 @@ void* accelerometerThread(void* arg);
 // Get the accelerometer values
 int* getAccel();
 
-// Get the largest change in the accelerometer
-char getLargestChange();
+// Get a random point from -0.5G to 0.5G
+int *randomPoint();
 
 #endif

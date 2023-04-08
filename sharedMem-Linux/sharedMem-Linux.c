@@ -9,6 +9,7 @@
 #include "sharedDataStruct.h"
 #include "accelerometer.h"
 #include "utils.h"
+#include "thread_control.h"
 
 // 0x0f000000,     // Green
 // 0x000f0000, // Red
@@ -76,6 +77,30 @@ volatile void* getPruMmapAddr(void)
     return pPruBase;
 }
 
+void turnOnBottmLEDs(volatile sharedMemStruct_t* pSharedPru0, int color) {
+    for (int i = 0; i < 3; i++) {
+        pSharedPru0->LEDS[i] = color;
+    }
+    for (int i = 3; i < 8; i++) {
+        pSharedPru0->LEDS[i] = 0;
+    }
+}
+
+void turnOnAllLEDs(volatile sharedMemStruct_t* pSharedPru0, int color) {
+    for (int i = 0; i < 8; i++) {
+        pSharedPru0->LEDS[i] = color;
+    }
+}
+
+void turnOnTopLEDs(volatile sharedMemStruct_t* pSharedPru0, int color) {
+    for (int i = 0; i < 4; i++) {
+        pSharedPru0->LEDS[i] = 0;
+    }
+    for (int i = 4; i < 8; i++) {
+        pSharedPru0->LEDS[i] = color;
+    }
+}
+
 void freePruMmapAddr(volatile void* pPruBase)
 {
     if (munmap((void*) pPruBase, PRU_LEN)) {
@@ -90,19 +115,10 @@ int main(void)
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
 
-    for (int i = 0; i < 8; i++) {
-        pSharedPru0->LEDS[i] = GREEN;
-        printf("%d\n", pSharedPru0->LEDS[i]);
-    }
-    pthread_t accel_thread;
-    pthread_create(&accel_thread, NULL, accelerometerThread, NULL);
-    for (int i = 0; i < 10; i++) {
-        int* accels = getAccel();
-        sleepForMs(100);
-        printf("%d, %d \n", accels[0], accels[1]);
-    }
-    stopped = 1;
-    pthread_join(accel_thread, NULL);
+    initThreads();
+    turnOnAllLEDs(pSharedPru0, GREEN);
+    sleep(60);
+    stopThreads();
 
     // // Drive it
     // for (int i = 0; i < 20; i++) {

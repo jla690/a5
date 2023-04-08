@@ -36,7 +36,7 @@ void writeI2CReg(unsigned char regAddr, unsigned char value)
     }
 }
 
-int initI2cBus(char* bus, int address)
+int initI2cBus(char *bus, int address)
 {
     i2cFileDesc = open(bus, O_RDWR);
     if (i2cFileDesc < 0) {
@@ -67,29 +67,43 @@ unsigned char readI2cReg(unsigned char regAddr)
     return value;
 }
 
-void* accelerometerThread(void* arg)
+void *accelerometerThread(void *arg)
 {
     initAccelerometer();
     while (!stopped) {
-        char buffer[7];
-        if (read(i2cFileDesc, buffer, sizeof(buffer)) != 7) {
-            printf("Error reading I2C\n");
-            exit(1);
+        int reset = 0;
+        int *r_point = randomPoint();
+        while (!reset) {
+            char buffer[7];
+            if (read(i2cFileDesc, buffer, sizeof(buffer)) != 7) {
+                printf("Error reading I2C\n");
+                exit(1);
+            }
+            x = (buffer[OUT_X_MSB] << 8) | (buffer[OUT_X_LSB]);
+            y = (buffer[OUT_Y_MSB] << 8) | (buffer[OUT_Y_LSB]);
+            z = (buffer[OUT_Z_MSB] << 8) | (buffer[OUT_Z_LSB]);
+            x /= 16;
+            y /= 16;
+            z /= 16;
+            printf("Random Point: %d, %d, %d\n", r_point[0], r_point[1],
+                   r_point[2]);
+            printf("X: %d, Y: %d, Z: %d\n", x, y, z);
+            if ((x < (r_point[0] + HYSTERESIS)) &&
+                (x > (r_point[0] - HYSTERESIS))) {
+                if ((y < (r_point[1] + HYSTERESIS)) &&
+                    (y > (r_point[1] - HYSTERESIS))) {
+                    printf("You Win!\n");
+                }
+            }
+            // printf("x: %d, y: %d, z: %d\n", x, y, z);
+            sleepForMs(10);
         }
-        x = (buffer[OUT_X_MSB] << 8) | (buffer[OUT_X_LSB]);
-        y = (buffer[OUT_Y_MSB] << 8) | (buffer[OUT_Y_LSB]);
-        z = (buffer[OUT_Z_MSB] << 8) | (buffer[OUT_Z_LSB]);
-        x /= 16;
-        y /= 16;
-        z /= 16;
-        // printf("x: %d, y: %d, z: %d\n", x, y, z);
-        sleepForMs(10);
     }
     close(i2cFileDesc);
     return 0;
 }
 
-int* getAccel()
+int *getAccel()
 {
     static int accel[3];
     pthread_mutex_lock(&lock);
@@ -100,18 +114,12 @@ int* getAccel()
     return accel;
 }
 
-char getLargestChange() {
-    int* accel = getAccel();
-    int temp_x = accel[0];
-    int temp_y = accel[1];
-    int temp_z = accel[2];
-    temp_z -= (G - 100);
-    if (abs(temp_x) > abs(temp_y) && abs(temp_x) > abs(temp_z) && abs(temp_x) > G) {
-        return 'x';
-    } else if (abs(temp_y) > abs(temp_x) && abs(temp_y) > abs(temp_z) && abs(temp_y) > G) {
-        return 'y';
-    } else if (abs(temp_z) > abs(temp_x) && abs(temp_z) > abs(temp_y) && abs(temp_z) > G) {
-        return 'z';
-    }
-    return 'n';
+int *randomPoint()
+{
+    srand((unsigned)time(NULL));
+    static int point[3];
+    point[0] = (rand() % G) - (G / 2);
+    point[1] = (rand() % G) - (G / 2);
+    point[2] = 0;
+    return point;
 }
