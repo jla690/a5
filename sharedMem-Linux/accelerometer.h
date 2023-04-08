@@ -19,10 +19,12 @@
 #define ACCELEROMETER_BUS "/dev/i2c-1"
 #define I2C_ADDRESS 0x1c
 
+// States of the accelerometer for displaying the LED pattern
 enum {
     NONE, LEFT_UP, LEFT, LEFT_DOWN, CENTER, CENTER_UP, CENTER_DOWN, RIGHT_UP, RIGHT, RIGHT_DOWN, LEFT_FAR_UP, LEFT_FAR_DOWN, RIGHT_FAR_UP, RIGHT_FAR_DOWN, CENTER_FAR_UP, CENTER_FAR_DOWN
 };
 
+// current state of the accelerometer
 extern int currentState;
 
 // Initialize the accelerometer

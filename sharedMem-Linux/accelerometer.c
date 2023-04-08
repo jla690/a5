@@ -75,12 +75,12 @@ void determineState(int* r_point) {
     if (x > r_point[0] + HYSTERESIS) {
         if (y > r_point[1] + HYSTERESIS) {
             currentState = LEFT_UP;
-            if (y > G - HYSTERESIS) {
+            if (y > G*.75 - HYSTERESIS) {
                 currentState = LEFT_FAR_UP;
             }
         } else if (y < r_point[1] - HYSTERESIS) {
             currentState = LEFT_DOWN;
-            if (y < -G + HYSTERESIS) {
+            if (y < -G*.75 + HYSTERESIS) {
                 currentState = LEFT_FAR_DOWN;
             }
         } else {
@@ -90,12 +90,12 @@ void determineState(int* r_point) {
     else if (x < r_point[0] - HYSTERESIS) {
         if (y > r_point[1] + HYSTERESIS) {
             currentState = RIGHT_UP;
-            if (y > G - HYSTERESIS) {
+            if (y > G*.75 - HYSTERESIS) {
                 currentState = RIGHT_FAR_UP;
             }
         } else if (y < r_point[1] - HYSTERESIS) {
             currentState = RIGHT_DOWN;
-            if (y < -G + HYSTERESIS) {
+            if (y < -G*.75 + HYSTERESIS) {
                 currentState = RIGHT_FAR_DOWN;
             }
         } else {
@@ -105,12 +105,12 @@ void determineState(int* r_point) {
     else {
         if (y > r_point[1] + HYSTERESIS) {
             currentState = CENTER_UP;
-            if (y > G - HYSTERESIS) {
+            if (y > G*.75 - HYSTERESIS) {
                 currentState = CENTER_FAR_UP;
             }
         } else if (y < r_point[1] - HYSTERESIS) {
             currentState = CENTER_DOWN;
-            if (y < -G + HYSTERESIS) {
+            if (y < -G*.75 + HYSTERESIS) {
                 currentState = CENTER_FAR_DOWN;
             }
         } else {
