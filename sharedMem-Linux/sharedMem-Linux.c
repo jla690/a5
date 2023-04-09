@@ -246,7 +246,7 @@ void *JoystickThread(void *arg)
         else if (pSharedPru0->clickRight)
         {
             printf("right\n");
-            // exit app
+            stopped = 1;
         }
         sleepForMs(100);
     }
@@ -267,7 +267,7 @@ int main(void)
 
     initializeLEDs();
     initThreads();
-    sleep(5);
+    while(!stopped) {sleepForMs(1);}
     stopThreads();
 
     // turn off all LEDs
