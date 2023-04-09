@@ -63,6 +63,8 @@
 #define PRU1_MEM_FROM_BASE(base) ((base) + PRU1_DRAM + PRU_MEM_RESERVED)
 #define PRUSHARED_MEM_FROM_BASE(base) ((base) + PRU_SHAREDMEM)
 
+int hits = 0;
+
 // Return the address of the PRU's base memory
 volatile void *getPruMmapAddr(void)
 {
@@ -220,6 +222,7 @@ void *LEDThread(void *arg)
         }
         sleepForMs(100);
     }
+    freePruMmapAddr(pPruBase);
     return 0;
 }
 
@@ -245,6 +248,7 @@ void *JoystickThread(void *arg)
             flag = 1;
             if(fire()) {
                 printf("\nHit\n");
+                hits++;
             } else {
                 printf("\nMISS\n");
             }
@@ -257,6 +261,7 @@ void *JoystickThread(void *arg)
         }
         sleepForMs(1);
     }
+    freePruMmapAddr(pPruBase);
     return 0;
 }
 
@@ -280,19 +285,6 @@ int main(void)
 
     // turn off all LEDs
     setAllLEDs(pSharedPru0, 0);
-
-    // // Drive it
-    // for (int i = 0; i < 20; i++) {
-    //     // Drive LED
-    //     pSharedPru0->isLedOn = (i % 2 == 0);
-
-    //     // Print button
-    //     printf("Button: %d\n",
-    //         pSharedPru0->isButtonPressed);
-
-    //     // Timing
-    //     sleep(1);
-    // }
 
     // Cleanup
     freePruMmapAddr(pPruBase);

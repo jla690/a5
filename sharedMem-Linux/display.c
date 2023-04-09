@@ -11,19 +11,18 @@
 #include <unistd.h>
 
 #include "utils.h"
+#include "sharedMem-Linux.h"
 
 static int dips[2];
-void dipsToDigits()
+void translateDigits()
 {
-    char buf[10];
-    int digitstoconvert = atoi(buf);
-    if (digitstoconvert > 99) {
+    if (hits > 99) {
         dips[0] = 9;
         dips[1] = 9;
     }
     else {
-        dips[0] = digitstoconvert / 10;
-        dips[1] = digitstoconvert % 10;
+        dips[0] = hits / 10;
+        dips[1] = hits % 10;
     }
 }
 
@@ -43,7 +42,7 @@ int displayInit(char *bus, int address)
     return i2cFileDesc;
 }
 
-void writeI2CReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
+void writeI2CRegDisplay(int i2cFileDesc, unsigned char regAddr, unsigned char value)
 {
     unsigned char buff[2];
     buff[0] = regAddr;
@@ -57,53 +56,53 @@ void writeI2CReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
 
 void writeNumber(int num, int i2cFileDesc)
 {
-    writeI2CReg(i2cFileDesc, REG_DIRA, 0x00);
-    writeI2CReg(i2cFileDesc, REG_DIRB, 0x00);
+    writeI2CRegDisplay(i2cFileDesc, REG_DIRA, 0x00);
+    writeI2CRegDisplay(i2cFileDesc, REG_DIRB, 0x00);
 
     switch (num) {
         case 0:
-            writeI2CReg(i2cFileDesc, REG_OUTA, ZERO_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, ZERO_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, ZERO_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, ZERO_BOTTOM);
             break;
         case 1:
-            writeI2CReg(i2cFileDesc, REG_OUTA, ONE_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, ONE_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, ONE_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, ONE_BOTTOM);
             break;
         case 2:
-            writeI2CReg(i2cFileDesc, REG_OUTA, TWO_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, TWO_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, TWO_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, TWO_BOTTOM);
             break;
         case 3:
-            writeI2CReg(i2cFileDesc, REG_OUTA, THREE_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, THREE_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, THREE_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, THREE_BOTTOM);
             break;
         case 4:
-            writeI2CReg(i2cFileDesc, REG_OUTA, FOUR_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, FOUR_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, FOUR_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, FOUR_BOTTOM);
             break;
         case 5:
-            writeI2CReg(i2cFileDesc, REG_OUTA, FIVE_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, FIVE_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, FIVE_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, FIVE_BOTTOM);
             break;
         case 6:
-            writeI2CReg(i2cFileDesc, REG_OUTA, SIX_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, SIX_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, SIX_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, SIX_BOTTOM);
             break;
         case 7:
-            writeI2CReg(i2cFileDesc, REG_OUTA, SEVEN_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, SEVEN_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, SEVEN_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, SEVEN_BOTTOM);
             break;
         case 8:
-            writeI2CReg(i2cFileDesc, REG_OUTA, EIGHT_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, EIGHT_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, EIGHT_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, EIGHT_BOTTOM);
             break;
         case 9:
-            writeI2CReg(i2cFileDesc, REG_OUTA, NINE_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, NINE_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, NINE_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, NINE_BOTTOM);
             break;
         default:
-            writeI2CReg(i2cFileDesc, REG_OUTA, ZERO_TOP);
-            writeI2CReg(i2cFileDesc, REG_OUTB, ZERO_BOTTOM);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTA, ZERO_TOP);
+            writeI2CRegDisplay(i2cFileDesc, REG_OUTB, ZERO_BOTTOM);
             break;
     }
 }
@@ -132,7 +131,7 @@ void *displayThreadFunction(void *arg)
 void *updateDigitsThread(void *arg)
 {
     while (!stopped) {
-        dipsToDigits();
+        translateDigits();
         sleepForMs(100);
     }
     return 0;

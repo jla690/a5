@@ -4,6 +4,8 @@
 #include "sharedDataStruct.h"
 volatile void * getPruMmapAddr(void);
 
+extern int hits;
+
 // turns on the bottom 3 LEDs
 void turnOnBottomLEDs(volatile sharedMemStruct_t *pSharedPru0, int color);
 
