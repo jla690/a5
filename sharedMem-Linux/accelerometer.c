@@ -16,6 +16,8 @@ static int16_t x = 0;
 static int16_t y = 0;
 static int16_t z = 0;
 
+static int *rand_point;
+
 int reset = 0;
 
 int currentState = NONE;
@@ -123,7 +125,7 @@ void *accelerometerThread(void *arg)
 {
     initAccelerometer();
     while (!stopped) {
-        int *r_point = randomPoint();
+        rand_point = randomPoint();
         reset = 0;
         while (!reset && !stopped) {
             char buffer[7];
@@ -137,10 +139,10 @@ void *accelerometerThread(void *arg)
             x /= 16;
             y /= 16;
             z /= 16;
-            printf("Random Point: %d, %d, %d\n", r_point[0], r_point[1],
-                   r_point[2]);
+            printf("Random Point: %d, %d, %d\n", rand_point[0], rand_point[1],
+                   rand_point[2]);
             printf("Actual: X: %d, Y: %d, Z: %d\n", x, y, z);
-            determineState(r_point);
+            determineState(rand_point);
             sleepForMs(100);
         }
     }
@@ -171,4 +173,12 @@ int *randomPoint()
     point[1] = (rand() % G) - (G / 2);
     point[2] = 0;
     return point;
+}
+
+bool fire() {
+    int *current = getAccel();
+    if(current[0] != rand_point[0]) return false;
+    if(current[1] != rand_point[1]) return false;
+    if(current[2] != rand_point[2]) return false;
+    return true;
 }

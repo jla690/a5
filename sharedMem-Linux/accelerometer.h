@@ -4,6 +4,7 @@
 
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
+#include <stdbool.h>
 
 #define OUT_X_MSB 0x01
 #define OUT_X_LSB 0x02
@@ -53,5 +54,8 @@ int* getAccel();
 
 // Get a random point from -0.5G to 0.5G
 int *randomPoint();
+
+//returns true if hits, false if it misses
+bool fire();
 
 #endif

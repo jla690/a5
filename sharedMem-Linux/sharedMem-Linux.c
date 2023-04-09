@@ -236,19 +236,26 @@ void *JoystickThread(void *arg)
 {
     volatile void *pPruBase = getPruMmapAddr();
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
+    int flag = 0;
     while (!stopped)
     {
         if (pSharedPru0->clickDown)
         {
-            printf("down\n");
-            // fire
+            if(flag != 0) continue;
+            flag = 1;
+            if(fire()) {
+                printf("\nHit\n");
+            } else {
+                printf("\nMISS\n");
+            }
         }
         else if (pSharedPru0->clickRight)
         {
-            printf("right\n");
             stopped = 1;
+        } else {
+            flag = 0;
         }
-        sleepForMs(100);
+        sleepForMs(1);
     }
     return 0;
 }
