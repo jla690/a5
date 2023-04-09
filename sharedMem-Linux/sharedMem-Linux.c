@@ -253,10 +253,10 @@ void *JoystickThread(void *arg)
     return 0;
 }
 
-void setupPins()
-{
-    // config-pin p8_15 pruin
-    // config-pin p8_16 pruin
+void initializeJoystick()
+{   
+    runCommand("config-pin p8_15 pruin");
+    runCommand("config-pin p8_16 pruin");
 }
 
 int main(void)
@@ -266,6 +266,7 @@ int main(void)
     volatile sharedMemStruct_t *pSharedPru0 = PRU0_MEM_FROM_BASE(pPruBase);
 
     initializeLEDs();
+    initializeJoystick();
     initThreads();
     while(!stopped) {sleepForMs(1);}
     stopThreads();
