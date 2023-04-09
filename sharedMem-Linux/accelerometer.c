@@ -180,5 +180,6 @@ bool fire() {
     if(current[0] != rand_point[0]) return false;
     if(current[1] != rand_point[1]) return false;
     if(current[2] != rand_point[2]) return false;
+    resetRandomPoint();
     return true;
 }
