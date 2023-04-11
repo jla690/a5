@@ -11,6 +11,7 @@
 #include "sharedMem-Linux.h"
 #include "thread_control.h"
 #include "utils.h"
+#include "pwm.h"
 
 // 0x0f000000,     // Green
 // 0x000f0000, // Red
@@ -272,7 +273,7 @@ void initializeJoystick()
 }
 
 void initializePWM() {
-    runCommand("sudo config-pin p9_22 pwm");
+    runCommand("config-pin p9_22 pwm");
 }
 
 int main(void)
@@ -284,6 +285,8 @@ int main(void)
     initializeLEDs();
     initializeJoystick();
     initThreads();
+
+    PWM_playSound(Hit);
     while(!stopped) {sleepForMs(1);}
     stopThreads();
 

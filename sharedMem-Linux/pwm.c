@@ -10,17 +10,19 @@ static bool soundPlaying = false;
 
 static void setPWMStatus(bool on) {
     if(on) {
-
+        writeToFile(PWM_ENABLE, "1");
     } else {
-        
+        writeToFile(PWM_ENABLE, "0");
     }
+}
+
+static void setPWMSound(char * period, char * duty) {
+    writeToFile(PERIOD_PATH, period);
+    writeToFile(DUTY_CYCLE_PATH, duty);
 }
 
 
 static void playFrequency(float frequency) {
-    char period[64] = "echo ";
-    char duty[64] = "echo ";
-    char dutyCycle;
     int periodValue = (1 / frequency) * 1000000000;
     char periodValueStr[32];
     char dutyValueStr[32];
@@ -29,27 +31,31 @@ static void playFrequency(float frequency) {
     int periodLength = (int)((ceil(log10(periodValue))+1)*sizeof(char));
     snprintf(periodValueStr, periodLength, "%d", periodValue);
     printf("%d = %s\n", periodValue, periodValueStr);
-    strncat(period, periodValueStr, periodLength);
-    strcat(period, PERIOD_PATH);
 
     int dutyLength = (int)((ceil(log10(periodValue/2))+1)*sizeof(char));
-    snprintf(dutyValueStr, dutyLength, "%d", periodValue/2);
+    snprintf(dutyValueStr, dutyLength, "%d", (int)periodValue/2);
     printf("%d = %s\n", periodValue/2, dutyValueStr);
-    strncat(duty, dutyValueStr, dutyLength);
-    strcat(duty, DUTY_CYCLE_PATH);
 
-    runCommand("echo 0 > /dev/bone/pwm/0/a/enable");
-    runCommand(period);
-    runCommand(duty);
-    runCommand("echo 1 > /dev/bone/pwm/0/a/enable");
+    setPWMStatus(false);
+    setPWMSound(periodValueStr, dutyValueStr);
+    setPWMStatus(true);
 }
 
 static void playHit() {
-
+    //play note
+    //sleep
+    //if sound playing == false call setPWMState(false) and return
+    //else play next note
+    //repeat until done
+    sound = None;
+    playFrequency(261.6);
+    sleepForMs(100);
+    setPWMStatus(false);
+    stopped = 1;
 }
 
 static void playMiss() {
-
+    printf("misss");
 }
 
 void * PWM_buzzerThread(void * args) {
@@ -59,9 +65,11 @@ void * PWM_buzzerThread(void * args) {
             sleepForMs(1);
         }
         if(sound == Hit) {
+            soundPlaying = true;
             playHit();
         }
         if(sound == Miss) {
+            soundPlaying = true;
             playMiss();
         }
     }
@@ -69,7 +77,7 @@ void * PWM_buzzerThread(void * args) {
     return 0;
 }
 
-void PWM_playSound(enum Sound newSound) {
+void PWM_playSound(int newSound) {
     sound = newSound;
     soundPlaying = false;
 }
