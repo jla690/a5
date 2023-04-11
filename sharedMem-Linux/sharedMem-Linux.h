@@ -1,9 +1,11 @@
+// Header for linux main file
 #ifndef _SHARED_MEM_LINUX_H_
 #define _SHARED_MEM_LINUX_H_
 
 #include "sharedDataStruct.h"
 volatile void * getPruMmapAddr(void);
 
+// number of hits
 extern int hits;
 
 // turns on the bottom 3 LEDs

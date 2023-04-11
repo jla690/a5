@@ -10,7 +10,7 @@ extern pthread_mutex_t lock;
 #define DEBOUNCE_DELAY 100
 #define MAX_LEN 1024
 
-// Sleep for a given number of milliseconds
+// Read a string from a file
 void readFromFile(char filename[], char buffer[]);
 
 // run a command without output
