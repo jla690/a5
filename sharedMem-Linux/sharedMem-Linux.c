@@ -282,6 +282,7 @@ void initializeJoystick()
 
 void initializePWM() {
     runCommand("config-pin p9_22 pwm");
+    PWM_setStatus(false);
 }
 
 int main(void)
@@ -293,7 +294,7 @@ int main(void)
     initializeLEDs();
     initializeJoystick();
     initThreads();
-
+    initializePWM();
     while(!stopped) {sleepForMs(1);}
     stopThreads();
 

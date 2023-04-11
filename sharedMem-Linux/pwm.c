@@ -9,7 +9,7 @@
 static enum Sound sound = None;
 static bool soundPlaying = false;
 
-static void setPWMStatus(bool on) {
+void PWM_setStatus(bool on) {
     if(on) {
         writeToFile(PWM_ENABLE, "1");
     } else {
@@ -35,9 +35,9 @@ static void playFrequency(float frequency, float ratio) {
     int dutyLength = (int)((ceil(log10(periodValue/2))+1)*sizeof(char));
     snprintf(dutyValueStr, dutyLength, "%d", (int)(periodValue * ratio));
 
-    setPWMStatus(false);
+    PWM_setStatus(false);
     setPWMSound(periodValueStr, dutyValueStr);
-    setPWMStatus(true);
+    PWM_setStatus(true);
 }
 
 static void playHit() {
@@ -47,12 +47,12 @@ static void playHit() {
         playFrequency(i * 100, 0.5);
         sleepForMs(80);
         if(!soundPlaying) {
-            setPWMStatus(false);
+            PWM_setStatus(false);
             return;
         }
     }
     sleepForMs(500);
-    setPWMStatus(false);
+    PWM_setStatus(false);
     soundPlaying = false;
 }
 
@@ -63,12 +63,12 @@ static void playMiss() {
         playFrequency(i * 500, 0.5);
         sleepForMs(40);
         if(!soundPlaying) {
-            setPWMStatus(false);
+            PWM_setStatus(false);
             return;
         }
     }
     sleepForMs(500);
-    setPWMStatus(false);
+    PWM_setStatus(false);
     soundPlaying = false;
 }
 

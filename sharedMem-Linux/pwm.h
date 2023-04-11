@@ -17,4 +17,6 @@ void PWM_playSound(int sound);
 
 bool PWM_getSound();
 
+void PWM_setStatus(bool on);
+
 #endif // !PWM_H
