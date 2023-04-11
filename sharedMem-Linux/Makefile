@@ -3,7 +3,7 @@
 
 # Edit this file to compile extra C files into their own programs.
 TARGETS = sharedMem-Linux
-C_FILES = accelerometer.c utils.c thread_control.c display.c
+C_FILES = accelerometer.c utils.c thread_control.c display.c pwm.c
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
 
@@ -24,7 +24,7 @@ OUTPUTS= $(addprefix $(OUTDIR)/, $(TARGETS))
 all: $(TARGETS)
 
 $(TARGETS):
-	$(CC_C) $(CFLAGS) $(C_FILES) $@.c -o $(OUTDIR)/$@ -lpthread
+	$(CC_C) $(CFLAGS) $(C_FILES) $@.c -o $(OUTDIR)/$@ -lpthread -lm
 
 PrimeThread:
 	make --directory=primeThread

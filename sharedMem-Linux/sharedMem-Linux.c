@@ -249,9 +249,11 @@ void *JoystickThread(void *arg)
             flag = 1;
             if(fire()) {
                 printf("\nHit\n");
+                PWM_playSound(Hit);
                 hits++;
             } else {
                 printf("\nMISS\n");
+                PWM_playSound(Miss);
             }
         }
         else if (pSharedPru0->clickRight)
@@ -286,7 +288,6 @@ int main(void)
     initializeJoystick();
     initThreads();
 
-    PWM_playSound(Hit);
     while(!stopped) {sleepForMs(1);}
     stopThreads();
 

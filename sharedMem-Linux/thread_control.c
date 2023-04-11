@@ -11,12 +11,14 @@
 #include "utils.h"
 #include "sharedMem-Linux.h"
 #include "display.h"
+#include "pwm.h"
 pthread_t accelerometer;
 pthread_t threadControl;
 pthread_t LED;
 pthread_t Joystick;
 pthread_t display;
 pthread_t displayUpdate;
+pthread_t Buzzer;
 
 void initThreads()
 {
@@ -31,6 +33,7 @@ void* threadControlThread(void* arg)
     pthread_create(&Joystick, NULL, JoystickThread, NULL);
     pthread_create(&display, NULL, displayThreadFunction, NULL);
     pthread_create(&displayUpdate, NULL, updateDigitsThread, NULL);
+    pthread_create(&Buzzer, NULL, PWM_buzzerThread, NULL);
     return 0;
 }
 
@@ -42,4 +45,5 @@ void stopThreads()
     pthread_join(Joystick, NULL);
     pthread_join(display, NULL);
     pthread_join(displayUpdate, NULL);
+    pthread_join(Buzzer, NULL);
 }
