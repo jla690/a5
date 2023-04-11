@@ -256,6 +256,7 @@ void *JoystickThread(void *arg)
                 printf("\nHit\n");
                 PWM_playSound(Hit);
                 hits++;
+                sleepForMs(800);
             } else {
                 printf("\nMISS\n");
                 PWM_playSound(Miss);
