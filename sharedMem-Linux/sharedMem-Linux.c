@@ -296,6 +296,7 @@ int main(void)
     initThreads();
     initializePWM();
     while(!stopped) {sleepForMs(1);}
+    PWM_setStatus(false);
     stopThreads();
 
     // turn off all LEDs
