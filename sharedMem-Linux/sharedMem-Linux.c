@@ -266,6 +266,10 @@ void initializeJoystick()
     runCommand("config-pin p8_16 pruin");
 }
 
+void initializePWM() {
+    runCommand("sudo config-pin p9_22 pwm");
+}
+
 int main(void)
 {
     // Get access to shared memory for my uses
