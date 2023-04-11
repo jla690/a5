@@ -42,6 +42,7 @@ static void playFrequency(float frequency, float ratio) {
 
 static void playHit() {
     sound = None;
+    soundPlaying = true;
     for(int i = 1; i < 10; i++) {
         playFrequency(i * 100, 0.5);
         sleepForMs(80);
@@ -52,10 +53,12 @@ static void playHit() {
     }
     sleepForMs(500);
     setPWMStatus(false);
+    soundPlaying = false;
 }
 
 static void playMiss() {
     sound = None;
+    soundPlaying = true;
     for(int i = 8; i > 0; i--) {
         playFrequency(i * 500, 0.5);
         sleepForMs(40);
@@ -66,6 +69,11 @@ static void playMiss() {
     }
     sleepForMs(500);
     setPWMStatus(false);
+    soundPlaying = false;
+}
+
+bool PWM_getSound() {
+    return soundPlaying;
 }
 
 void * PWM_buzzerThread(void * args) {
@@ -75,11 +83,9 @@ void * PWM_buzzerThread(void * args) {
             sleepForMs(100);
         }
         if(sound == Hit) {
-            soundPlaying = true;
             playHit();
         }
         if(sound == Miss) {
-            soundPlaying = true;
             playMiss();
         }
     }

@@ -245,7 +245,12 @@ void *JoystickThread(void *arg)
     {
         if (pSharedPru0->clickDown)
         {
-            if(flag != 0) continue;
+            if(flag != 0) {
+                if(!PWM_getSound()) {
+                    PWM_playSound(Miss);
+                }
+                continue;
+            }
             flag = 1;
             if(fire()) {
                 printf("\nHit\n");
