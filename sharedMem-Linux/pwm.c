@@ -8,6 +8,7 @@
 
 static enum Sound sound = None;
 static bool soundPlaying = false;
+pthread_mutex_t PWM_lock;
 
 void PWM_setStatus(bool on) {
     if(on) {
@@ -43,6 +44,7 @@ static void playFrequency(float frequency, float ratio) {
 static void playHit() {
     sound = None;
     soundPlaying = true;
+    pthread_mutex_unlock(&PWM_lock);
     for(int i = 1; i < 10; i++) {
         playFrequency(i * 100, 0.5);
         sleepForMs(80);
@@ -59,6 +61,7 @@ static void playHit() {
 static void playMiss() {
     sound = None;
     soundPlaying = true;
+    pthread_mutex_unlock(&PWM_lock);
     for(int i = 8; i > 0; i--) {
         playFrequency(i * 500, 0.5);
         sleepForMs(40);
@@ -78,8 +81,12 @@ bool PWM_getSound() {
 
 void * PWM_buzzerThread(void * args) {
 
+    pthread_mutex_init(&PWM_lock, NULL);
+
     while(!stopped) {
+        pthread_mutex_lock(&PWM_lock);
         if(sound == None) {
+            pthread_mutex_unlock(&PWM_lock);
             sleepForMs(100);
         }
         if(sound == Hit) {
@@ -89,11 +96,13 @@ void * PWM_buzzerThread(void * args) {
             playMiss();
         }
     }
-
+    pthread_mutex_destroy(&PWM_lock);
     return 0;
 }
 
 void PWM_playSound(int newSound) {
+    pthread_mutex_lock(&PWM_lock);
     sound = newSound;
     soundPlaying = false;
+    pthread_mutex_unlock(&PWM_lock);
 }
