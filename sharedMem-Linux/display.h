@@ -43,7 +43,7 @@
 int displayInit(char* bus, int address);
 
 // write to the I2C register
-void writeI2CReg(int i2cFileDesc, unsigned char regAddr, unsigned char value);
+void writeI2CRegDisplay(int i2cFileDesc, unsigned char regAddr, unsigned char value);
 
 // thread for displaying the number
 void* displayThreadFunction(void* arg);
@@ -55,4 +55,4 @@ void* updateDigitsThread(void* arg);
 void writeNumber(int num, int i2cFileDesc);
 
 // converting int to left and right digits
-void dipsToDigits();
+void translateDigits();
